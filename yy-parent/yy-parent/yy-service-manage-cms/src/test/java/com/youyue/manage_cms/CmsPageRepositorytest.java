@@ -7,9 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -34,11 +32,22 @@ public class CmsPageRepositorytest {
     @Test
     public void testPage(){
         //分页参数
-        int page = 0;
-        int size = 10;
+        int page = 3;
+        int size = 5;
         Pageable pageable = PageRequest.of(page, size);
-        Page<CmsPage> pages = cmsPageRepository.findAll(pageable);
-        System.out.println(pages);
+//        构建条件值对象
+        CmsPage cmsPage = new CmsPage();
+//        cmsPage.setSiteId("5a751fab6abb5044e0d19ea1");站点id
+        cmsPage.setPageAliase("课程详情");
+//        条件匹配器
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching()
+        .withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
+//          定义Example
+        Example<CmsPage> example = Example.of(cmsPage, exampleMatcher);
+//        of方法第一个参数表示存放条件值对象
+//        第二个参数表示条件匹配器
+        Page<CmsPage> pages = cmsPageRepository.findAll(example,pageable);
+        System.out.println(pages.getContent());
     }
     //修改
     @Test
